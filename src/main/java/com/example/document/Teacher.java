@@ -3,6 +3,7 @@ package com.example.document;
 import com.mongodb.lang.NonNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -21,13 +22,23 @@ public class Teacher {
     private boolean active;
 
     private List<String> roles;
+    private List<Lesson> lessons;
 
-    public Teacher(String id, String username, String password, boolean active, List<String> roles) {
+    public List<Lesson> getLessons() {
+        return lessons;
+    }
+
+    public void setLessons(List<Lesson> lessons) {
+        this.lessons = lessons;
+    }
+
+    public Teacher(String id, String username, String password, boolean active, List<String> roles, List<Lesson> lessons) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.active = active;
         this.roles = roles;
+        this.lessons = lessons;
     }
 
     public String getId() {

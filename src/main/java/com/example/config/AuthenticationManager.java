@@ -29,16 +29,12 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
                 .flatMap(auth -> {
                     String[] user = service.getNameAndCode(auth.getCredentials()).split(",");
                     String username = user[0];
-                    String id = user[1];
                     Mono<Teacher> teacher = teacherService.findByUsernameTeacher(username);
                     return teacher.<Authentication>flatMap(t -> {
                         if (service.validate(t, auth.getCredentials())) {
-                            auth.setAuthenticated(true);
-                            return Mono.justOrEmpty(new UsernamePasswordAuthenticationToken(t.getUsername(), t.getId(), Collections.emptyList()))
-                                    ;
+                            return Mono.justOrEmpty(new UsernamePasswordAuthenticationToken(t.getUsername(), t.getId(), Collections.emptyList()));
                         }
-                        Mono.error(new IllegalArgumentException("Invalid Token"));
-                        return Mono.justOrEmpty(new UsernamePasswordAuthenticationToken(username, id));
+                        return Mono.error(new IllegalArgumentException("Invalid Token"));
                     });
                 });
     }

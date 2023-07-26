@@ -27,11 +27,6 @@ public class LessonsController {
     @Autowired
     private PasswordEncoder encoder;
 
-    @GetMapping
-    public Mono<String> auth() {
-        return Mono.just("deu certo");
-    }
-
     @PostMapping("/login")
     public Mono<ResponseEntity<String>> login(@RequestBody Teacher teacher) {
             Mono<Teacher> foundUser = teacherService.findByUsernameTeacher(teacher.getUsername());
@@ -40,8 +35,7 @@ public class LessonsController {
                     return ResponseEntity.status(404).body("No user found,please register before logging in");
                 }
                 if (encoder.matches(teacher.getPassword(), t.getPassword())) {
-                    return ResponseEntity.ok(
-                    ).body(jwtService.generate(t.getUsername(), t.getId()));
+                    return ResponseEntity.ok().body(jwtService.generate(t.getUsername(), t.getId()));
                 }
                 return ResponseEntity.badRequest().body("Invalid Credential");
             });
