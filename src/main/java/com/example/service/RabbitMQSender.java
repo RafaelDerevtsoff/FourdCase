@@ -1,7 +1,10 @@
 package com.example.service;
 
 import com.example.document.Teacher;
+import com.example.dto.CreateLessonsRequest;
 
 public interface RabbitMQSender {
-    Runnable send(Teacher teacher);
+    Teacher send(Teacher teacher);
+
+    CreateLessonsRequest send(CreateLessonsRequest teacher);
 }

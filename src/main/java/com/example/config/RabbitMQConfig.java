@@ -18,38 +18,47 @@ public class RabbitMQConfig {
     private String exchange;
     @Value("${rabbitmq.json.routing.key}")
     private String jsonRoutingKey;
+    @Value("${rabbitmq.lesson.routing.key}")
+    private String lessonsRoutingKey;
     @Value("spring.rabbitmq.host")
     private String host;
+    @Value("${rabbit.lesson.queue.name}")
+    private String lessonQueue;
+
+
 
 
 
     @Bean
-    public Queue jsonQueue() {
-        return new Queue(jsonQueue);
+    public Declarables topicBindings() {
+        Queue topicQueue1 = new Queue(jsonQueue);
+        Queue topicQueue2 = new Queue(lessonQueue);
+
+        TopicExchange topicExchange = new TopicExchange(exchange);
+
+        return new Declarables(
+                topicQueue1,
+                topicQueue2,
+                topicExchange,
+                BindingBuilder
+                        .bind(topicQueue1)
+                        .to(topicExchange).with(jsonRoutingKey),
+                BindingBuilder
+                        .bind(topicQueue2)
+                        .to(topicExchange).with(lessonsRoutingKey));
     }
 
     @Bean
-    public TopicExchange exchange() {
-        return new TopicExchange(exchange);
-    }
-
-
-    @Bean
-    public Binding jsonBinding() {
-        return BindingBuilder
-                .bind(jsonQueue())
-                .to(exchange())
-                .with(jsonRoutingKey);
-    }
-
-    @Bean
-    public MessageConverter messageConverter(){
+    public MessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
-    public AmqpTemplate amqpTemplate(ConnectionFactory connectionFactory){
+    @Bean
+    public RabbitTemplate amqpTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(messageConverter());
-        return rabbitTemplate ;
+        return rabbitTemplate;
     }
+
+
 }
