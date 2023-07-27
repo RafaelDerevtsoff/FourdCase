@@ -11,4 +11,6 @@ public interface LessonsService {
     Mono<ResponseEntity<String>> createLessons(String teacher, List<Lesson> lessons);
 
     Mono<ResponseEntity<CreateLessonsRequest>> updateLessons(String teacher,List<Lesson> updateLessons);
+
+    Mono<ResponseEntity<CreateLessonsRequest>> getAllLessons(String teacher);
 }

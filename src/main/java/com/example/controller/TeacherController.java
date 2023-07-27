@@ -9,21 +9,17 @@ import com.example.service.TeacherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
-import java.io.Serializable;
 import java.util.List;
 
 @RestController
-@RequestMapping("/lessons")
-public class LessonsController {
-    private Logger LOGGER = LoggerFactory.getLogger(LessonsController.class);
+@RequestMapping("/teacher")
+public class TeacherController {
+    private Logger LOGGER = LoggerFactory.getLogger(TeacherController.class);
     @Autowired
     private JWTService jwtService;
     @Autowired
@@ -47,27 +43,11 @@ public class LessonsController {
         });
     }
 
-
-
-    @PostMapping("/create-lessons")
-    public Mono<ResponseEntity<CreateLessonsRequest>> createLessons(@RequestHeader("Authorization") String authorizationHeader, @RequestBody List<Lesson> lessons) {
-        String teacher = jwtService.getNameAndCode(authorizationHeader.split(" ")[1].trim()).split(",")[0];
-        return lessonsService.createLessons(teacher, lessons)
-                .thenReturn(ResponseEntity
-                        .ok()
-                        .body(new CreateLessonsRequest(teacher, lessons)));
+    @PostMapping("/create-teacher")
+    public Mono<ResponseEntity<String>> createTeacher(@RequestBody Teacher teacher) {
+        teacher.setPassword(encoder.encode(teacher.getPassword()));
+        return teacherService.createNewTeacher(teacher);
     }
 
-    @PutMapping("/update-lesson")
-    public Mono<ResponseEntity<CreateLessonsRequest>> updateLesson(@RequestHeader("Authorization") String authorizationHeader, @RequestBody List<Lesson> updateLessons) {
-        String teacher = jwtService.getNameAndCode(authorizationHeader.split(" ")[1].trim()).split(",")[0];
-        return lessonsService.updateLessons(teacher, updateLessons);
-    }
 
-    @PostMapping("/get-all-lessons")
-    public Mono<ResponseEntity<CreateLessonsRequest>> getAllTasks(@RequestHeader("Authorization") String authorizationHeader) {
-        String teacher = jwtService.getNameAndCode(authorizationHeader.split(" ")[1].trim()).split(",")[0];
-
-        return lessonsService.getAllLessons(teacher);
-    }
 }
