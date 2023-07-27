@@ -42,7 +42,7 @@ public class LessonsController {
         }
 
         @PostMapping("/create-teacher")
-        public Mono<Teacher> createTeacher (@RequestBody Teacher teacher){
+        public Mono<ResponseEntity<String>> createTeacher (@RequestBody Teacher teacher){
             teacher.setPassword(encoder.encode(teacher.getPassword()));
             return teacherService.createNewTeacher(teacher);
         }

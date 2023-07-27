@@ -1,10 +1,13 @@
 package com.example.service.impl;
 
 import com.example.document.Teacher;
+import com.example.service.RabbitMQSender;
+import com.example.service.impl.rabbit.RabbitMQSenderImpl;
 import com.example.repository.TeacherRepository;
 import com.example.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,10 +18,14 @@ import reactor.core.publisher.Mono;
 @EnableReactiveMongoRepositories
 public class TeacherServiceImpl implements TeacherService {
     private final TeacherRepository teacherRepository;
+    private final RabbitMQSender rabbitTemplate;
 
     @Override
-    public Mono<Teacher> createNewTeacher(Teacher teacher) {
-        return teacherRepository.save(teacher);
+    public Mono<ResponseEntity<String>> createNewTeacher(Teacher teacher) {
+        return Mono.fromRunnable(() ->rabbitTemplate.send(teacher))
+                .flatMap(t -> Mono.just(ResponseEntity.ok().body("User Created")))
+                .doOnSuccess(t -> { Mono.just(ResponseEntity.ok().body("User Created"));})
+                .doOnError(e -> Mono.error(new IllegalArgumentException("Unable to create user")));
     }
 
     @Override
@@ -32,8 +39,9 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Autowired
-    public TeacherServiceImpl(TeacherRepository teacherRepository) {
+    public TeacherServiceImpl(TeacherRepository teacherRepository, RabbitMQSenderImpl rabbitTemplate) {
         this.teacherRepository = teacherRepository;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
 
