@@ -41,6 +41,7 @@ public class SecurityConfig {
                 .authorizeExchange(auth -> {
                     auth.pathMatchers("/login").permitAll();
                     auth.pathMatchers("/create-teacher").permitAll();
+                    auth.pathMatchers("/update-lesson").permitAll();
                     auth.anyExchange().authenticated();
                 })
                 .addFilterAt(jwtFilter, SecurityWebFiltersOrder.AUTHENTICATION)

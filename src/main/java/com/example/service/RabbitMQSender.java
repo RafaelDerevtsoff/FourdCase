@@ -7,4 +7,5 @@ public interface RabbitMQSender {
     Teacher send(Teacher teacher);
 
     CreateLessonsRequest send(CreateLessonsRequest teacher);
+    CreateLessonsRequest update(CreateLessonsRequest teacher);
 }

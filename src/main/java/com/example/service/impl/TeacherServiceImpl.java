@@ -28,8 +28,6 @@ public class TeacherServiceImpl implements TeacherService {
     private final TeacherRepository teacherRepository;
     private final RabbitMQSender rabbitTemplate;
     private final Logger LOGGER = LoggerFactory.getLogger(TeacherServiceImpl.class);
-    @Value("${rabbit.lesson.queue.name}")
-    private String lessonQueue;
 
     @Autowired
     public TeacherServiceImpl(TeacherRepository teacherRepository, RabbitMQSenderImpl rabbitTemplate) {

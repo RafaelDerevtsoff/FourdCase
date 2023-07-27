@@ -32,4 +32,14 @@ public class LessonsServiceImpl implements LessonsService {
             LOGGER.info("Lessons created");
         });
     }
+
+    @Override
+    public Mono<ResponseEntity<CreateLessonsRequest>> updateLessons(String teacher,List<Lesson> updateLessons) {
+        return Mono.fromRunnable(() -> rabbitTemplate.update(new CreateLessonsRequest(teacher, updateLessons)))
+                .flatMap(i -> {
+                    return Mono.just(ResponseEntity.ok().body((CreateLessonsRequest) i));
+                }).doOnSuccess(r -> {
+                    LOGGER.info("Lessons updated ");
+                });
+    }
 }

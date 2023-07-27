@@ -2,6 +2,7 @@ package com.example.controller;
 
 import com.example.document.Lesson;
 import com.example.document.Teacher;
+import com.example.dto.CreateLessonsRequest;
 import com.example.service.JWTService;
 import com.example.service.LessonsService;
 import com.example.service.TeacherService;
@@ -50,9 +51,19 @@ public class LessonsController {
         teacher.setPassword(encoder.encode(teacher.getPassword()));
         return teacherService.createNewTeacher(teacher);
     }
+
     @PostMapping("/create-lessons")
-    public Mono<ResponseEntity<String>> createLessons(@RequestHeader("Authorization") String authorizationHeader, @RequestBody List<Lesson> lessons) {
+    public Mono<ResponseEntity<CreateLessonsRequest>> createLessons(@RequestHeader("Authorization") String authorizationHeader, @RequestBody List<Lesson> lessons) {
         String teacher = jwtService.getNameAndCode(authorizationHeader.split(" ")[1].trim()).split(",")[0];
-        return lessonsService.createLessons(teacher,lessons);
+        return lessonsService.createLessons(teacher, lessons)
+                .thenReturn(ResponseEntity
+                        .ok()
+                        .body(new CreateLessonsRequest(teacher, lessons)));
+    }
+
+    @PutMapping("/update-lesson")
+    public Mono<ResponseEntity<CreateLessonsRequest>> updateLesson(@RequestHeader("Authorization") String authorizationHeader,@RequestBody List<Lesson> updateLessons ) {
+        String teacher = jwtService.getNameAndCode(authorizationHeader.split(" ")[1].trim()).split(",")[0];
+        return lessonsService.updateLessons(teacher,updateLessons);
     }
 }
