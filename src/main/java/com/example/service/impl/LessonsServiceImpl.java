@@ -1,6 +1,7 @@
 package com.example.service.impl;
 
 import com.example.document.Lesson;
+import com.example.document.Teacher;
 import com.example.dto.CreateLessonsRequest;
 import com.example.repository.TeacherRepository;
 import com.example.service.LessonsService;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -44,10 +46,7 @@ public class LessonsServiceImpl implements LessonsService {
     }
 
     @Override
-    public Mono<ResponseEntity<CreateLessonsRequest>> getAllLessons(String teacher) {
-        return teacherRepository.findByUsername(teacher).flatMap(t -> {
-            List<Lesson> lessons = t.getLessons();
-            return Mono.just(ResponseEntity.ok().body(new CreateLessonsRequest(teacher, lessons)));
-        });
+    public Flux<Lesson> getAllLessons(String teacher) {
+        return teacherRepository.findByUsername(teacher).flatMapIterable(Teacher::getLessons);
     }
 }

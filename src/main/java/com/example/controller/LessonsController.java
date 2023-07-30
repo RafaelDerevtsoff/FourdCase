@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.Serializable;
@@ -52,8 +53,7 @@ public class LessonsController {
     @PostMapping("/create-lessons")
     public Mono<ResponseEntity<CreateLessonsRequest>> createLessons(@RequestHeader("Authorization") String authorizationHeader, @RequestBody List<Lesson> lessons) {
         String teacher = jwtService.getNameAndCode(authorizationHeader.split(" ")[1].trim()).split(",")[0];
-        return lessonsService.createLessons(teacher, lessons)
-                .thenReturn(ResponseEntity
+        return lessonsService.createLessons(teacher, lessons).thenReturn(ResponseEntity
                         .ok()
                         .body(new CreateLessonsRequest(teacher, lessons)));
     }
@@ -64,10 +64,10 @@ public class LessonsController {
         return lessonsService.updateLessons(teacher, updateLessons);
     }
 
-    @PostMapping("/get-all-lessons")
-    public Mono<ResponseEntity<CreateLessonsRequest>> getAllTasks(@RequestHeader("Authorization") String authorizationHeader) {
-        String teacher = jwtService.getNameAndCode(authorizationHeader.split(" ")[1].trim()).split(",")[0];
 
+    @PostMapping("/get-all-lessons")
+    public Flux<Lesson> getAllTasks(@RequestHeader("Authorization") String authorizationHeader) {
+        String teacher = jwtService.getNameAndCode(authorizationHeader.split(" ")[1].trim()).split(",")[0];
         return lessonsService.getAllLessons(teacher);
     }
 }
