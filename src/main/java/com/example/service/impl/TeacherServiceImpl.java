@@ -38,8 +38,8 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public Mono<ResponseEntity<String>> createNewTeacher(Teacher teacher) {
         return Mono.fromRunnable(() -> rabbitTemplate.send(teacher))
-                .flatMap(t -> Mono.just(ResponseEntity.ok().body("User Created")))
-                .doOnSuccess(result  -> LOGGER.info("User Created"));
+                .doOnSuccess(result  -> LOGGER.info("User Created"))
+                .thenReturn(ResponseEntity.ok().body("User Created"));
     }
 
     @Override

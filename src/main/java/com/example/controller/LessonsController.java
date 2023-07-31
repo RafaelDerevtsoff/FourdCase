@@ -19,6 +19,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -28,34 +29,13 @@ public class LessonsController {
     @Autowired
     private JWTService jwtService;
     @Autowired
-    TeacherService teacherService;
-    @Autowired
-    private PasswordEncoder encoder;
-    @Autowired
     private LessonsService lessonsService;
-
-    @PostMapping("/login")
-    public Mono<ResponseEntity<String>> login(@RequestBody Teacher teacher) {
-        Mono<Teacher> foundUser = teacherService.findByUsernameTeacher(teacher.getUsername());
-        return foundUser.mapNotNull(t -> {
-            if (t.getUsername().isEmpty() || t.getId().isEmpty()) {
-                return ResponseEntity.status(404).body("No user found,please register before logging in");
-            }
-            if (encoder.matches(teacher.getPassword(), t.getPassword())) {
-                return ResponseEntity.ok().body(jwtService.generate(t.getUsername(), t.getId()));
-            }
-            return ResponseEntity.badRequest().body("Invalid Credential");
-        });
-    }
-
 
 
     @PostMapping("/create-lessons")
     public Mono<ResponseEntity<CreateLessonsRequest>> createLessons(@RequestHeader("Authorization") String authorizationHeader, @RequestBody List<Lesson> lessons) {
         String teacher = jwtService.getNameAndCode(authorizationHeader.split(" ")[1].trim()).split(",")[0];
-        return lessonsService.createLessons(teacher, lessons).thenReturn(ResponseEntity
-                        .ok()
-                        .body(new CreateLessonsRequest(teacher, lessons)));
+        return lessonsService.createLessons(teacher, lessons);
     }
 
     @PutMapping("/update-lesson")
@@ -65,7 +45,7 @@ public class LessonsController {
     }
 
 
-    @PostMapping("/get-all-lessons")
+    @GetMapping("/get-all-lessons")
     public Flux<Lesson> getAllTasks(@RequestHeader("Authorization") String authorizationHeader) {
         String teacher = jwtService.getNameAndCode(authorizationHeader.split(" ")[1].trim()).split(",")[0];
         return lessonsService.getAllLessons(teacher);

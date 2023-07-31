@@ -5,19 +5,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 @JsonSerialize
 @JsonDeserialize
 public class CreateLessonsRequest {
     @JsonProperty("teacher")
     private String teacher;
     @JsonProperty("lessons")
-    private List<Lesson> lessons;
+    private Map<String,Lesson> lessons;
 
-
-    public CreateLessonsRequest(String teacher, List<Lesson> lessons) {
+    public CreateLessonsRequest(String teacher, Map<String, Lesson> lessons) {
         this.teacher = teacher;
         this.lessons = lessons;
+    }
+
+    public CreateLessonsRequest() {
     }
 
     public String getTeacher() {
@@ -28,11 +33,11 @@ public class CreateLessonsRequest {
         this.teacher = teacher;
     }
 
-    public List<Lesson> getLessons() {
+    public Map<String, Lesson> getLessons() {
         return lessons;
     }
 
-    public void setLessons(List<Lesson> lessons) {
+    public void setLessons(HashMap<String, Lesson> lessons) {
         this.lessons = lessons;
     }
 }

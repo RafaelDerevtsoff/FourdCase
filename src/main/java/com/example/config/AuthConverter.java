@@ -16,6 +16,6 @@ public class AuthConverter implements ServerAuthenticationConverter {
         )
                 .filter(s -> s.startsWith("Bearer "))
                 .map(s -> s.substring(7))
-                .map(s -> new BearerToken(s));
+                .map(BearerToken::new);
     }
 }

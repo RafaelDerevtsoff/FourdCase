@@ -2,6 +2,7 @@ package com.example.service.impl.rabbit;
 
 import com.example.document.Teacher;
 import com.example.dto.CreateLessonsRequest;
+import com.example.dto.UpdateLessonRequest;
 import com.example.service.RabbitMQSender;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class RabbitMQSenderImpl implements RabbitMQSender {
     private final RabbitTemplate rabbitTemplate;
-
 
     @Autowired
     public RabbitMQSenderImpl(RabbitTemplate rabbitTemplate) {
@@ -28,20 +28,17 @@ public class RabbitMQSenderImpl implements RabbitMQSender {
     private String lessonUpdateRoutingKey;
 
     @Override
-    public Teacher send(Teacher teacher) {
+    public void send(Teacher teacher) {
         rabbitTemplate.convertAndSend(exchange, routingkey, teacher);
-        return teacher;
     }
 
     @Override
-    public CreateLessonsRequest send(CreateLessonsRequest lessons) {
+    public void send(CreateLessonsRequest lessons) {
         rabbitTemplate.convertAndSend(exchange, lessonRountingKey, lessons);
-        return lessons;
     }
 
     @Override
-    public CreateLessonsRequest update(CreateLessonsRequest updatedLessons) {
+    public void update(UpdateLessonRequest updatedLessons) {
         rabbitTemplate.convertAndSend(exchange, lessonUpdateRoutingKey, updatedLessons);
-        return updatedLessons;
     }
 }

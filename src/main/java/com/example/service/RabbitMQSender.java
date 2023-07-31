@@ -2,10 +2,11 @@ package com.example.service;
 
 import com.example.document.Teacher;
 import com.example.dto.CreateLessonsRequest;
+import com.example.dto.UpdateLessonRequest;
 
 public interface RabbitMQSender {
-    Teacher send(Teacher teacher);
+    void send(Teacher teacher);
 
-    CreateLessonsRequest send(CreateLessonsRequest teacher);
-    CreateLessonsRequest update(CreateLessonsRequest teacher);
+    void send(CreateLessonsRequest teacher);
+    void update(UpdateLessonRequest teacher);
 }
