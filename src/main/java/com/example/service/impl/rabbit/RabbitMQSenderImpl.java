@@ -7,6 +7,7 @@ import com.example.service.RabbitMQSender;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,12 +21,14 @@ public class RabbitMQSenderImpl implements RabbitMQSender {
 
     @Value("${rabbitmq.exchange.name}")
     private String exchange;
-    @Value("${rabbitmq.json.routing.key}")
+    @Value("${rabbitmq.create.teacher.routing.key}")
     private String routingkey;
     @Value("${rabbitmq.lesson.routing.key}")
     private String lessonRountingKey;
     @Value("${rabbitmq.lesson.update.routing.key}")
     private String lessonUpdateRoutingKey;
+
+
 
     @Override
     public void send(Teacher teacher) {

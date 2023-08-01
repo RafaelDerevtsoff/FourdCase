@@ -12,12 +12,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    @Value("${rabbitmq.json.queue.name}")
-    private String jsonQueue;
+    @Value("${rabbitmq.create.teacher.queue.name}")
+    private String createUserQueue;
     @Value("${rabbitmq.exchange.name}")
     private String exchange;
-    @Value("${rabbitmq.json.routing.key}")
-    private String jsonRoutingKey;
+    @Value("${rabbitmq.create.teacher.routing.key}")
+    private String createUserRoutingKey;
     @Value("${rabbitmq.lesson.routing.key}")
     private String lessonsRoutingKey;
     @Value("${rabbitmq.lesson.update.routing.key}")
@@ -35,7 +35,7 @@ public class RabbitMQConfig {
 
     @Bean
     public Declarables topicBindings() {
-        Queue topicQueue1 = new Queue(jsonQueue);
+        Queue topicQueue1 = new Queue(createUserQueue);
         Queue topicQueue2 = new Queue(lessonQueue);
         Queue topicQueue3 = new Queue(lessonUpdateQueue);
 
@@ -49,10 +49,11 @@ public class RabbitMQConfig {
                 BindingBuilder
                         .bind(topicQueue1)
                         .to(topicExchange)
-                        .with(jsonRoutingKey),
+                        .with(createUserRoutingKey),
                 BindingBuilder
                         .bind(topicQueue2)
-                        .to(topicExchange).with(lessonsRoutingKey),
+                        .to(topicExchange)
+                        .with(lessonsRoutingKey),
                 BindingBuilder
                         .bind(topicQueue3)
                         .to(topicExchange)
