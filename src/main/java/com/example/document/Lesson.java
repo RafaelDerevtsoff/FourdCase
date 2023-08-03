@@ -1,10 +1,12 @@
 package com.example.document;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
 @JsonSerialize
+@JsonDeserialize
 public class Lesson {
     @JsonProperty("title")
     String title;
@@ -35,6 +37,9 @@ public class Lesson {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public Lesson() {
     }
 
     public Lesson(String title, String description, Date date) {

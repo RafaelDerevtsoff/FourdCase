@@ -6,7 +6,6 @@ import com.example.dto.UpdateLessonRequest;
 
 public interface RabbitMQSender {
     void send(Teacher teacher);
-
     void send(CreateLessonsRequest teacher);
     void update(UpdateLessonRequest teacher);
 }

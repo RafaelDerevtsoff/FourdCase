@@ -18,8 +18,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.reactive.config.CorsRegistry;
+import org.springframework.web.reactive.config.WebFluxConfigurer;
 
 import javax.crypto.SecretKey;
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -28,9 +35,20 @@ public class SecurityConfig {
     private String secret;
     private JwtParser jwtParser;
 
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("*"));
+        configuration.setAllowedMethods(List.of("*"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean
@@ -41,12 +59,14 @@ public class SecurityConfig {
                 .authorizeExchange(auth -> {
                     auth.pathMatchers("/teacher/login").permitAll();
                     auth.pathMatchers("/teacher/create-teacher").permitAll();
+                    auth.pathMatchers("/teacher/activate-login").permitAll();
+                    auth.pathMatchers("/webjars/swagger-ui/index.html#/", "v3/api-docs", "/v3/api-docs/swagger-config", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/favicon.ico").permitAll();
                     auth.anyExchange().authenticated();
                 })
                 .addFilterAt(jwtFilter, SecurityWebFiltersOrder.AUTHENTICATION)
-                .httpBasic(basic -> basic.disable())
-                .formLogin(form -> form.disable())
-                .csrf(csrf -> csrf.disable())
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .build();
     }
 

@@ -7,8 +7,9 @@ import com.example.service.RabbitMQSender;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
+
+
 
 @Service
 public class RabbitMQSenderImpl implements RabbitMQSender {
@@ -21,13 +22,16 @@ public class RabbitMQSenderImpl implements RabbitMQSender {
 
     @Value("${rabbitmq.exchange.name}")
     private String exchange;
+    @Value("${rabbitmq.update.lesson.exchange.name}")
+    private String updateLessonExchange;
+    @Value("${rabbitmq.create.lesson.exchange.name}")
+    private String createLessonExchange;
     @Value("${rabbitmq.create.teacher.routing.key}")
     private String routingkey;
     @Value("${rabbitmq.lesson.routing.key}")
     private String lessonRountingKey;
     @Value("${rabbitmq.lesson.update.routing.key}")
     private String lessonUpdateRoutingKey;
-
 
 
     @Override
@@ -37,11 +41,11 @@ public class RabbitMQSenderImpl implements RabbitMQSender {
 
     @Override
     public void send(CreateLessonsRequest lessons) {
-        rabbitTemplate.convertAndSend(exchange, lessonRountingKey, lessons);
+        rabbitTemplate.convertAndSend(createLessonExchange, lessonRountingKey, lessons);
     }
 
     @Override
     public void update(UpdateLessonRequest updatedLessons) {
-        rabbitTemplate.convertAndSend(exchange, lessonUpdateRoutingKey, updatedLessons);
+        rabbitTemplate.convertAndSend(updateLessonExchange, lessonUpdateRoutingKey, updatedLessons);
     }
 }
