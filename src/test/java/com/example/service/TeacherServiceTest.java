@@ -12,6 +12,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.HashMap;
@@ -20,7 +21,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = TeacherService.class)
-public class teacherServiceTest {
+public class TeacherServiceTest {
     @Mock
     private  TeacherRepository teacherRepository;
     @Mock
@@ -36,12 +37,44 @@ public class teacherServiceTest {
             List.of(),
             new HashMap<>());
     @Test
+    public void findByUsernameUserDetails(){
+        when(teacherRepository.findByUsername(anyString())).thenReturn(Mono.just(teacher));
+        StepVerifier.create(teacherService.findByUsername("UserTest"))
+                .expectNextMatches(response -> response.getUsername().equals("UserTest"))
+                .verifyComplete();
+    }
+    @Test
     public void createNewTeacherTest(){
         doNothing().when(rabbitTemplate).convertAndSend(anyString(),anyString(),any(Teacher.class));
-//        doNothing().when(r).send(any(Teacher.class));
         doNothing().when(rabbitMQSender).send(any(Teacher.class));
         StepVerifier.create(teacherService.createNewTeacher(teacher))
                 .expectNextMatches(response -> response.equals(ResponseEntity.ok().body("User Created")))
                 .verifyComplete();
     }
+    @Test
+    public void activateLoginTest(){
+        when(teacherRepository.findByUsername(anyString())).thenReturn(Mono.just(teacher));
+        when(teacherRepository.save(any(Teacher.class))).thenReturn(Mono.just(teacher));
+
+        StepVerifier.create(teacherService.activateLogin("UserTest"))
+                .expectNextMatches(response -> response.equals(ResponseEntity.ok().body(true)))
+                .verifyComplete();
+
+    }
+    @Test
+    public void findByUsernameTeacherTest(){
+        when(teacherRepository.findByUsername(anyString())).thenReturn(Mono.just(teacher));
+        StepVerifier.create(teacherService.findByUsernameTeacher("UserTest"))
+                .expectNextMatches(response -> response.equals(teacher))
+                .verifyComplete();
+    }
+    @Test
+    public void findByUsernameAndIdTest(){
+        when(teacherRepository.findByUsernameAndId(anyString(),anyString())).thenReturn(Mono.just(teacher));
+
+        StepVerifier.create(teacherService.findByUsernameAndId("UserTest","mockId"))
+                .expectNextMatches(response -> response.equals(teacher))
+                .verifyComplete();
+    }
+
 }

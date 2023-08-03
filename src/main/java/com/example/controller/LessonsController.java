@@ -6,6 +6,7 @@ import com.example.dto.CreateLessonsRequest;
 import com.example.service.JWTService;
 import com.example.service.LessonsService;
 import com.example.service.TeacherService;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/lessons")
+@AllArgsConstructor
 public class LessonsController {
-    private Logger LOGGER = LoggerFactory.getLogger(LessonsController.class);
     @Autowired
     private JWTService jwtService;
     @Autowired
