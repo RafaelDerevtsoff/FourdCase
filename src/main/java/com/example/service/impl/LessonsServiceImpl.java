@@ -37,7 +37,10 @@ public class LessonsServiceImpl implements LessonsService {
 
     @Override
     public Mono<ResponseEntity<CreateLessonsRequest>> createLessons(String teacher, List<Lesson> lessons) {
+        final String key = RedisHelper.generateKey(teacher, "getAllLessons");
+        ReactiveValueOperations<String, Teacher> lessonsOperations = redisTemplate.opsForValue();
         Map<String, Lesson> newLessons = lessons.stream().collect(Collectors.toMap(Lesson::getTitle, lesson -> lesson));
+        lessonsOperations.delete(key).subscribe();
         return Mono.fromRunnable(() -> rabbitTemplate.send(new CreateLessonsRequest(teacher, newLessons)))
                 .doOnSuccess(r -> {
                     LOGGER.info("Lessons created");

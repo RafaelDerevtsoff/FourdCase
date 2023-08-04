@@ -1,0 +1,53 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    container_name: rabbit-compose-container
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - 27017:27017
+
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+
+  case:
+    image: leafard/case:1.2
+    container_name: case
+    ports:
+      - 8080:8080
+    environment:
+      SECRET_KEY: c2ZzZHNmc2Rnc2ZnZmRhZ2FkZmhkZ2FnZmRnYWRnYWRmZ2FkZmdkZmdkYWdk
+      MONGO_USERNAME: admin
+      MONGO_PASSWORD: admin
+      MONGO_HOST: mongodb
+      RABBIT_HOST: rabbitmq
+      REDIS_HOST: redis
+
+  rabbitmicroservice:
+    image: leafard/rabbitcase:1.1
+    container_name: rabbitcase
+    ports:
+      - 8081:8082
+    environment:
+      SECRET_KEY: c2ZzZHNmc2Rnc2ZnZmRhZ2FkZmhkZ2FnZmRnYWRnYWRmZ2FkZmdkZmdkYWdk
+      MONGO_USERNAME: admin
+      MONGO_PASSWORD: admin
+      RABBIT_HOST: rabbitmq
+      MONGO_HOST: mongodb
+      EMAIL: "Adicionar email "
+      EMAIL_PASSWORD: "adicinar a senha de aplicação aqui"
+      REDIS_HOST: redis
+
+    depends_on:
+      - mongodb
+      - rabbitmq
+  redis:
+    image: redis/redis-stack-server
+    container_name: redis
+    ports:
+      - 6379:6379

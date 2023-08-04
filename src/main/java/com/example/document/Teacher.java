@@ -46,6 +46,8 @@ public class Teacher {
 
     private HashMap<String,Lesson> lessons;
 
+    public Teacher() {
+    }
 
     public Teacher(@Nonnull String username, @NotNull String password, boolean active, @NotNull String email, List<String> roles, HashMap<String, Lesson> lessons) {
         this.username = Objects.requireNonNull(username);
