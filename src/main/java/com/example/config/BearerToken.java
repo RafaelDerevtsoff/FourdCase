@@ -20,4 +20,6 @@ public class BearerToken extends AbstractAuthenticationToken {
     public String getPrincipal() {
         return this.token;
     }
+
+
 }
